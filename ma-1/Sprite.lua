@@ -22,6 +22,8 @@ function Sprite:init(name, x, y)
     --self.height = self.img.getPixelHeight()
 end
 
-function Sprite:render()
-    love.graphics.draw(self.img, self.x, self.y)
+function Sprite:render(x, y)
+    if x == nil then x = self.x
+    if y == nil then y = self.y
+    love.graphics.draw(self.img, x, y)
 end
