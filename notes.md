@@ -79,3 +79,7 @@ So I think my agenda for MA-1 is:
 * upon deselection of a unit, warp the unit to the area of the preview silhouette. This is how you'll move units.
 
 Having a fuller set of shop features and tracking all of that data / metadata... that'll have to wait till MA-2. I think this'll be an easier update though, hopefully it doesn't take long.
+
+### Day 2
+
+Okay, sudden realization that I got after my initial implementation attempt. I don't really want a cell with a list of sprites in layer order, I want to have layers, contained in order in a list themselves, where each layer functions like how "grid" basically does now.

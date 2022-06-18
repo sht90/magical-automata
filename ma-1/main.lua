@@ -7,10 +7,13 @@ right now, the goal is just to establish a grid of tiles that you can interact w
 Class = require 'class'
 
 require 'Sprite'
+require 'Layer'
 
--- where x E[0,n-1] and y E[0,m-1]
+--[[
+Here, I specify regions in terms of total dimensions, where each region
+has a specific tile sprite. Note this is only where x E[0,n-1] and y E[0,m-1]
+]]
 function getTileSprite(x, y, n, m)
-    --print("hey, got a new tile",x,", ",y)
     if (x==0 or x==n-1 or y==0 or y==m-1) then
         return Sprite(edge,x*p,y*p)
     end
@@ -23,22 +26,14 @@ function getTileSprite(x, y, n, m)
     return Sprite(background,x*p,y*p)
 end
 
+--[[
+override love.load, this loads the window
+]]
 function love.load()
     love.window.setTitle('Magical Automata')
-    --[[
-    in the horizontal direction, there'll be 5 border tiles
-    vertical, there'll be 4 border tiles.
-    the width of the board should be equal to the width of the shop
-    the board should be at least as tall as it is wide (y>x)
-    the shop should start at the top left, and leave room for gold & lives.
-    What do I think is a good board size, that's condusive to yknow... good strategic thinking?
-    The number 17x15 just keeps coming into my head. If I don't like it, I can change it.
-    This constrains n to be 15 + 15 + 5 = 35. And m is 17 + 4 = 21.
-    Okay... that was dumb moving numbers around, but for now... I actually quite like the result.
-    ]]
-    n=35
-    m=21
-    p=32
+    n=35 -- width (in # of tiles)
+    m=21 -- height (in # of tiles)
+    p=32 -- pixels per tile
     love.window.setMode(n*p, m*p, {
         fullscreen = false,
         resizable = false,
@@ -75,7 +70,6 @@ end
 debounce = false
 
 function love.draw()
-    --print(debounce)
     -- layer 1: establish the grid
     for k in pairs(grid) do
         for j in pairs(grid[k]) do
@@ -86,7 +80,7 @@ function love.draw()
         end
     end
     -- layer 2: establish higlighted entities.
-    local x, y = love.mouse.getPosition() -- get the position of the mouse
+    local x, y = love.mouse.getPosition()
     if love.mouse.isDown(1) and debounce == false then
         selected[math.floor(y/p)][math.floor(x/p)] = not selected[math.floor(y/p)][math.floor(x/p)]
         debounce = true
@@ -94,6 +88,4 @@ function love.draw()
     if not love.mouse.isDown(1) then
         debounce = false
     end
-    --hoverer = Sprite(highlight,math.floor(x/p)*p,math.floor(y/p)*p)
-    --hoverer:render()
 end
