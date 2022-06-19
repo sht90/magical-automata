@@ -23,7 +23,7 @@ function Sprite:init(name, x, y)
 end
 
 function Sprite:render(x, y)
-    if x == nil then x = self.x
-    if y == nil then y = self.y
+    if x == nil then x = self.x end
+    if y == nil then y = self.y end
     love.graphics.draw(self.img, x, y)
 end
