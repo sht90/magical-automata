@@ -42,6 +42,9 @@ function love.load()
 
     -- make all intended layers I used layers 0, 1, and 2 here
     -- these will be the background, interactable objects, and mouse highlights
+    -- TODO
+    -- make one more layer for valid areas to put an object. Let them be red+translucent so that I can tell what they look like in some hypothetical debugging mode, but leave their visibility on false in all standard applications.
+    -- and I guess make another layer, still, for displaying that an intended placement is invalid.
     layers = {}
     for i=0,3 do
         layers[i] = Layer(n, m, p, {}, {}, {})
