@@ -26,6 +26,16 @@ function getTileSprite(x, y, n, m)
     return Sprite(background,x*p,y*p)
 end
 
+function getUnitSprite(x, y, n, m)
+    if (x == 4 and y == 5) then
+        return Sprite(unit1, x*p, y*p)
+    end
+    if (x == 9 and y == 6) then
+        return Sprite(unit2, x*p, y*p)
+    end
+    return nil
+end
+
 --[[
 override love.load, this loads the window
 ]]
@@ -62,6 +72,9 @@ function love.load()
     edge = 'images/edge_tile.png'
     highlight = 'images/highlight_tile.png'
     red_highlight = 'images/red_highlight.png'
+    unit1 = 'images/unit1.png'
+    unit2 = 'images/unit2_2.png'
+    unit3 = 'images/unit3.png'
 
     tmpb = {}
     tmpg = {}
@@ -75,8 +88,8 @@ function love.load()
             y = r * p
             tmpg[0][c] = getTileSprite(c, r, n, m)
             tmpb[0][c] = true
-            tmpg[1][c] = nil
-            tmpb[1][c] = false
+            tmpg[1][c] = getUnitSprite(c, r, n, m)
+            tmpb[1][c] = ((not (tmpg[1][c] == nil)) or (c-1>=0 and (not (tmpg[1][c-1] == nil))) or (c-2>=0 and (not (tmpg[1][c-2] == nil))) or (r-1>=0 and (not (layers[1].gvis[r-1][c] == nil))) or (r-2>=0 and (not (layers[1].gvis[r-2][c] == nil))))
             tmpg[2][c] = Sprite(highlight, x, y)
             tmpb[2][c] = false
             tmpg[3][c] = Sprite(red_highlight, x, y)
@@ -94,13 +107,17 @@ debounce = false
 function love.draw()
     -- decide what to render:
     local x, y = love.mouse.getPosition()
-    if love.mouse.isDown(1) and debounce == false then
+    local r = math.floor(y/p)
+    local c = math.floor(x/p)
+    --[[if love.mouse.isDown(1) and debounce == false then
         layers[2].bvis[math.floor(y/p)][math.floor(x/p)] = not layers[2].bvis[math.floor(y/p)][math.floor(x/p)]
         debounce = true
     end
     if not love.mouse.isDown(1) then
         debounce = false
-    end
+    end]]
+    --if layers[1].gvis[r][c] != nil or layers[1].gvis[r][c]
+
     -- finally, render everything
     for k in pairs(layers) do
         for j in pairs(layers[k].gvis) do
