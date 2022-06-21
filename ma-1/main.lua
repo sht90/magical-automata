@@ -8,6 +8,7 @@ Class = require 'class'
 
 require 'Sprite'
 require 'Layer'
+require 'Unit'
 
 --[[
 Here, I specify regions in terms of total dimensions, where each region
@@ -26,14 +27,26 @@ function getTileSprite(x, y, n, m)
     return Sprite(background,x*p,y*p)
 end
 
-function getUnitSprite(x, y, n, m)
-    if (x == 4 and y == 5) then
-        return Sprite(unit1, x*p, y*p)
-    end
-    if (x == 9 and y == 6) then
-        return Sprite(unit2, x*p, y*p)
+function getUnitSprite(x, y, units)
+    for i=1,3 do
+        if (not(units[i] == nil)) and x == units[i].x/p and y == units[i].y/p then
+            return units[i]
+        end
     end
     return nil
+end
+
+function forAllUnitCellsSetTrue(c, r, varr, units)
+    for i=1,3 do
+        u = units[i]
+        if (not (u == nil)) and u:isInBounds(c, r, p) then
+            for i=u.x/p,u.x/p+u.width-1 do
+                for j=u.y/p,u.y/p+u.height-1 do
+                    varr[i][j] = true
+                end
+            end
+        end
+    end
 end
 
 --[[
@@ -50,11 +63,6 @@ function love.load()
         vsync = true
     })
 
-    -- make all intended layers I used layers 0, 1, and 2 here
-    -- these will be the background, interactable objects, and mouse highlights
-    -- TODO
-    -- make one more layer for valid areas to put an object. Let them be red+translucent so that I can tell what they look like in some hypothetical debugging mode, but leave their visibility on false in all standard applications.
-    -- and I guess make another layer, still, for displaying that an intended placement is invalid.
     numLayers = 4
     layers = {}
     for i=0,numLayers do
@@ -76,6 +84,10 @@ function love.load()
     unit2 = 'images/unit2_2.png'
     unit3 = 'images/unit3.png'
 
+    units = {}
+    units[1] = Unit(3, 3, Sprite(unit1, 4*p, 5*p))
+    units[2] = Unit(3, 3, Sprite(unit2, 9*p, 6*p))
+
     tmpb = {}
     tmpg = {}
     for r=0,m-1 do
@@ -88,7 +100,12 @@ function love.load()
             y = r * p
             tmpg[0][c] = getTileSprite(c, r, n, m)
             tmpb[0][c] = true
-            tmpg[1][c] = getUnitSprite(c, r, n, m)
+            tmpg[1][c] = getUnitSprite(c, r, units)
+            --[[if tmpg[1][c] == nil then
+                print(r, c, 'nil')
+            else
+                print(r, c, tmpg[1][c].sprite.name)
+            end]]
             tmpb[1][c] = ((not (tmpg[1][c] == nil)) or (c-1>=0 and (not (tmpg[1][c-1] == nil))) or (c-2>=0 and (not (tmpg[1][c-2] == nil))) or (r-1>=0 and (not (layers[1].gvis[r-1][c] == nil))) or (r-2>=0 and (not (layers[1].gvis[r-2][c] == nil))))
             tmpg[2][c] = Sprite(highlight, x, y)
             tmpb[2][c] = false
@@ -109,6 +126,9 @@ function love.draw()
     local x, y = love.mouse.getPosition()
     local r = math.floor(y/p)
     local c = math.floor(x/p)
+
+    -- see if you're hovering over a unit
+    forAllUnitCellsSetTrue(c, r, layers[2].bvis, units)
     --[[if love.mouse.isDown(1) and debounce == false then
         layers[2].bvis[math.floor(y/p)][math.floor(x/p)] = not layers[2].bvis[math.floor(y/p)][math.floor(x/p)]
         debounce = true
@@ -124,8 +144,13 @@ function love.draw()
             for h in pairs(layers[k].gvis[j]) do
                 if layers[k].bvis[j][h] then
                     layers[k].gvis[j][h]:render()
+                    if k == 2 then
+                        layers[k].bvis[j][h] = false
+                    end
                 end
             end
         end
     end
 end
+
+-- /Applications/love.app/Contents/MacOS/love ma-1/
