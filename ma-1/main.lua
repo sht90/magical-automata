@@ -45,8 +45,9 @@ function love.load()
     -- TODO
     -- make one more layer for valid areas to put an object. Let them be red+translucent so that I can tell what they look like in some hypothetical debugging mode, but leave their visibility on false in all standard applications.
     -- and I guess make another layer, still, for displaying that an intended placement is invalid.
+    numLayers = 4
     layers = {}
-    for i=0,3 do
+    for i=0,numLayers do
         layers[i] = Layer(n, m, p, {}, {}, {})
     end
 
@@ -60,32 +61,32 @@ function love.load()
     background = 'images/bgnd_tile.png'
     edge = 'images/edge_tile.png'
     highlight = 'images/highlight_tile.png'
+    red_highlight = 'images/red_highlight.png'
 
+    tmpb = {}
+    tmpg = {}
     for r=0,m-1 do
-        tmp0g = {}
-        tmp0b = {}
-        tmp1g = {}
-        tmp1b = {}
-        tmp2g = {}
-        tmp2b = {}
+        for i=0,numLayers do
+            tmpg[i] = {}
+            tmpb[i] = {}
+        end
         for c=0,n-1 do
             x = c * p
             y = r * p
-            tmp0g[c] = getTileSprite(c, r, n, m)
-            tmp0b[c] = true
-            tmp1g[c] = nil
-            tmp1b[c] = false
-            tmp2g[c] = Sprite(highlight, x, y)
-            tmp2b[c] = false
+            tmpg[0][c] = getTileSprite(c, r, n, m)
+            tmpb[0][c] = true
+            tmpg[1][c] = nil
+            tmpb[1][c] = false
+            tmpg[2][c] = Sprite(highlight, x, y)
+            tmpb[2][c] = false
+            tmpg[3][c] = Sprite(red_highlight, x, y)
+            tmpb[3][c] = false
         end
-        layers[0].gvis[r] = tmp0g
-        layers[0].bvis[r] = tmp0b
-        layers[1].gvis[r] = tmp1g
-        layers[1].bvis[r] = tmp1b
-        layers[2].gvis[r] = tmp2g
-        layers[2].bvis[r] = tmp2b
+        for i=0,numLayers do
+            layers[i].gvis[r] = tmpg[i]
+            layers[i].bvis[r] = tmpb[i]
+        end
     end
-
 end
 
 debounce = false
