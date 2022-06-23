@@ -36,18 +36,19 @@ function getUnitSprite(x, y, units)
     return nil
 end
 
-function forAllUnitCellsSetTrue(c, r, varr, units)
+--[[function forAllUnitCellsSetTrue(c, r, varr, units)
     for i=1,3 do
         u = units[i]
         if (not (u == nil)) and u:isInBounds(c, r, p) then
-            for i=u.x/p,u.x/p+u.width-1 do
+            var[c][r] = true
+            --[[for i=u.x/p,u.x/p+u.width-1 do
                 for j=u.y/p,u.y/p+u.height-1 do
                     varr[i][j] = true
                 end
             end
         end
     end
-end
+end]]
 
 --[[
 override love.load, this loads the window
@@ -120,6 +121,8 @@ function love.load()
 end
 
 debounce = false
+a = 0
+b = 0
 
 function love.draw()
     -- decide what to render:
@@ -128,7 +131,8 @@ function love.draw()
     local c = math.floor(x/p)
 
     -- see if you're hovering over a unit
-    forAllUnitCellsSetTrue(c, r, layers[2].bvis, units)
+
+    --forAllUnitCellsSetTrue(c, r, layers[2].bvis, units)
     --[[if love.mouse.isDown(1) and debounce == false then
         layers[2].bvis[math.floor(y/p)][math.floor(x/p)] = not layers[2].bvis[math.floor(y/p)][math.floor(x/p)]
         debounce = true
@@ -142,11 +146,17 @@ function love.draw()
     for k in pairs(layers) do
         for j in pairs(layers[k].gvis) do
             for h in pairs(layers[k].gvis[j]) do
+                -- see if you're hovering over a unit
+                if k==2 then
+                    layers[k].bvis[j][h] = (units[1]:isInBounds(c,r,p) and units[1]:isInBounds(h,j,p)) or (units[2]:isInBounds(c,r,p) and units[2]:isInBounds(h,j,p))
+                end
+                -- actually render stuff
                 if layers[k].bvis[j][h] then
                     layers[k].gvis[j][h]:render()
-                    if k == 2 then
-                        layers[k].bvis[j][h] = false
-                    end
+                end
+                -- dont continue to render things from L2 after rendering them becomes unnecessary.
+                if k==2 then
+                    layers[k].bvis[j][h] = false
                 end
             end
         end

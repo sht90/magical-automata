@@ -83,3 +83,7 @@ Having a fuller set of shop features and tracking all of that data / metadata...
 ### Day 2
 
 Okay, sudden realization that I got after my initial implementation attempt. I don't really want a cell with a list of sprites in layer order, I want to have layers, contained in order in a list themselves, where each layer functions like how "grid" basically does now.
+
+### Day 3
+
+Hm. I'm feeling myself get more disorganized. Maybe I do actually need to implement that cells class. I have two grids, really: a grid of every single pixel, and a grid of cells, which are the smallest allowed group of pixels. I keep on getting mixed up between the two, because I always forget what implements what. I also feel like there needs to be a pretty elegant way of grouping cells together. This might actually give me interesting insight into, like, image processing stuff. Like, it might be handy to track metadata for every set of 3x3 tiles. 

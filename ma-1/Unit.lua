@@ -16,7 +16,7 @@ function Unit:init(width, height, sprite)
 end
 
 function Unit:isInBounds(x, y, p)
-    return self.x/p - self.width < x and self.x/p >= x and self.y/p - self.height < y and self.y/p >= y
+    return ((math.floor(self.x/p) + self.width) > x) and (math.floor(self.x/p) <= x) and (math.floor(self.y/p) + self.height > y) and (math.floor(self.y/p) <= y)
 end
 
 function Unit:render(x, y)
